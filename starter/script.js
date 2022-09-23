@@ -110,3 +110,67 @@ bmw.brake();
 bmw.accelerate();
 //------end coding challenge 1#
 //!=========
+//. ES6 Classes
+// class PersonCL {}
+//class declaration
+class PersonCl {
+  constructor(firstName, birthYear) {
+    this.firstName = firstName;
+    this.birthYear = birthYear;
+  }
+  calcAge() {
+    //this will be put into the prototype
+    console.log(2037 - this.birthYear);
+  }
+  greet() {
+    console.log(`Hey${this.firstName}`);
+  }
+  get age() {
+    return 2037 - this.birthYear;
+  }
+  //setting a property that already exists
+  set fullName(name) {
+    //adding the _ avoids conflict with fullName
+    if (name.includes(' ')) this._fullName = name;
+    else alert(`{name} is not a full name!`);
+  }
+  get fullName() {
+    return this._fullName;
+  }
+}
+
+const jessica = new PersonCl('Jessica', 1996);
+console.log(jessica.__proto__ === PersonCl.prototype);
+PersonCl.prototype.greet = function () {
+  console.log(`Hey ${this.firstName}`);
+};
+jessica.greet();
+console.log(jessica.age);
+//1. classes are not hoisted
+//2. classes are first-class citizens
+//3. classes are executed in strict mode
+
+const walter = new PersonCl('Walter White', 1965);
+// es6 classes
+//!========
+//-----getters and setters es6 classes
+const account = {
+  owner: 'Jonas',
+  movements: [200, 530, 120, 300],
+
+  get latest() {
+    return this.movements.slice(-1).pop();
+  },
+  set latest(mov) {
+    this.movements.push(mov);
+  },
+};
+console.log(account.latest);
+account.latest = 50;
+console.log(account.movements);
+//-----getters and setters
+//!========
+//-----static methods
+
+//-----static methods
+//!========
