@@ -366,5 +366,48 @@ tesla.brake();
 tesla.accelerate(); //the first method that the prototype chain sees if there are duplicates the first one it sees will be used instead of going to the parent
 // end coding challenge #3
 //!=========
-//inheritance between classes using es6 classes
+//------inheritance between classes using es6 classes
 //es6 classes are basically constructor functions but with a modern syntax
+
+// ----end es6 class inheritance
+//!==========
+//static method
+class PersonCl2 {
+  constructor(firstName, birthYear) {
+    this.firstName = firstName;
+    this.birthYear = birthYear;
+  }
+  calcAge() {
+    //this will be put into the prototype
+    console.log(2037 - this.birthYear);
+  }
+  greet() {
+    console.log(`Hey${this.firstName}`);
+  }
+  get age() {
+    return 2037 - this.birthYear;
+  }
+  //setting a property that already exists
+  set fullName(name) {
+    //adding the _ avoids conflict with fullName
+    if (name.includes(' ')) this._fullName = name;
+    else alert(`{name} is not a full name!`);
+  }
+  get fullName() {
+    return this._fullName;
+  }
+  // static method
+  static hey() {
+    console.log('Hey there 👋');
+  }
+  // static method
+}
+class studentCl extends PersonCl2 {
+  constructor(fullName, birthYear, course) {
+    //always needs to happen first
+    super(fullName, birthYear);
+    this.course = course;
+  }
+}
+
+const martha = new studentCl('Martha Jones', 2012, 'Computer science');
