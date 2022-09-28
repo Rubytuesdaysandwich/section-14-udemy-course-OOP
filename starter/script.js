@@ -453,3 +453,21 @@ jay.calcAge();
 
 //inheritance between class continued Object.create
 //!=================
+//Another class example
+class Account {
+  constructor(owner, currency, pin, movement) {
+    this.owner = owner;
+    this.currency = currency;
+    this.pin = pin;
+    this.movements = [];
+    this.local = navigator.language;
+
+    console.log(`Thanks for opening an account, ${owner}
+    `);
+  }
+}
+const acc1 = new Account('Jonas', 'EUR', 1111);
+console.log(acc1);
+
+acc1.movements;
+//end another class example
