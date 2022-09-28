@@ -369,8 +369,6 @@ tesla.accelerate(); //the first method that the prototype chain sees if there ar
 //------inheritance between classes using es6 classes
 //es6 classes are basically constructor functions but with a modern syntax
 
-// ----end es6 class inheritance
-//!==========
 //static method
 class PersonCl2 {
   constructor(firstName, birthYear) {
@@ -425,3 +423,5 @@ class studentCl extends PersonCl2 {
 const martha = new studentCl('Martha Jones', 2012, 'Computer science');
 martha.introduce();
 martha.calcAge();
+//-------end inheritance between classes es6
+//!=================
