@@ -13,6 +13,8 @@ const Person = function (firstName, birthYear) {
   //     console.log(2037 - this.birthYear);
   //   };
 };
+//----static methods
+
 const jonas = new Person('Jonas', 1991);
 console.log(jonas);
 
@@ -26,6 +28,15 @@ const jack = new Person('jack', 1975);
 console.log(matilda, jack);
 
 console.log(jonas instanceof Person);
+// static method
+Person.hey = function () {
+  console.log('Hey there 👋');
+  console.log(this);
+};
+Person.hey();
+Person.hey();
+//jonas.hey()//is not a function
+// static method
 //!========
 //-----prototypes
 console.log(Person.prototype);
@@ -137,6 +148,12 @@ class PersonCl {
   get fullName() {
     return this._fullName;
   }
+  // static method
+  static hey() {
+    console.log('Hey there 👋');
+    console.log(this);
+  }
+  // static method
 }
 
 const jessica = new PersonCl('Jessica', 1996);
@@ -151,6 +168,9 @@ console.log(jessica.age);
 //3. classes are executed in strict mode
 
 const walter = new PersonCl('Walter White', 1965);
+// static method
+PersonCl.hey;
+// static method
 // es6 classes
 //!========
 //-----getters and setters es6 classes
@@ -171,6 +191,180 @@ console.log(account.movements);
 //-----getters and setters
 //!========
 //-----static methods
-
+// completed
 //-----static methods
 //!========
+// Object.create
+// The Object.create() method creates a new object, using an existing object as the prototype of the newly created object.
+// A object created using the create method inherits the properties that you set it to
+const PersonProto = {
+  calcAge() {
+    console.log(2037 - this.birthYear);
+  },
+
+  init(firstName, birthYear) {
+    this.firstName = firstName;
+    this.birthYear = birthYear;
+  },
+};
+//object.create creates a new object with steven
+//steven will inherit the properties of PersonProto
+const steven = Object.create(PersonProto); //steve empty object connected to person proto
+console.log(steven);
+steven.name = 'Steven'; //name is a property set on "steven",but not on Person
+steven.birthYear = 2002;
+steven.calcAge();
+
+console.log(steven.__proto__ === PersonProto); //true
+
+const sarah = Object.create(PersonProto);
+sarah.init('Sarah', 1979); //using the init function to get
+sarah.calcAge();
+//----object.create
+//!=========
+//----coding challenge #2
+/* 
+1. Re-create challenge 1, but this time using an ES6 class;
+2. Add a getter called 'speedUS' which returns the current speed in mi/h (divide by 1.6);
+3. Add a setter called 'speedUS' which sets the current speed in mi/h (but converts it to km/h before storing the value, by multiplying the input by 1.6);
+4. Create a new car and experiment with the accelerate and brake methods, and with the getter and setter.
+
+DATA CAR 1: 'Ford' going at 120 km/h
+
+GOOD LUCK 😀
+*/
+class CarCl {
+  constructor(make, speed) {
+    this.make = make;
+    this.speed = speed;
+  }
+
+  accelerate = function () {
+    this.speed += 10;
+    console.log(`${this.make} is going at ${this.speed}km/h`);
+  };
+  brake = function () {
+    this.speed -= 5;
+    console.log(`${this.make} is going at ${this.speed}km/h`);
+  };
+  get speedUS() {
+    return this.speed / 1.6;
+  }
+  set speedUS(speed) {
+    this.speed = speed * 1.6;
+  }
+}
+
+const ford = new CarCl('Ford', 120);
+console.log(ford.speedUS);
+ford.accelerate();
+ford.accelerate();
+ford.brake();
+ford.speedUS = 50; //50 * 1.6 = 80 ki/h
+console.log(ford);
+//getters => access properties
+//setters => change mutate them
+
+//-----coding challenge #2
+//!==========
+//------inheritance between classes
+//inheritance in constructor functions
+//
+const Person1 = function (firstName, birthYear) {
+  this.firstName = firstName;
+  this.birthYear = birthYear;
+};
+
+Person1.prototype.calcAge = function () {
+  console.log(2037 - this.birthYear);
+};
+//same data as person
+
+//don't violate the DRY principle
+const Student = function (firstName, birthYear, course) {
+  //  using call method to call the this
+  Person1.call(this, firstName, birthYear); //get the first the name and birth year from the person1 by using the call method
+  this.course = course;
+};
+
+// Linking prototypes
+//creates an empty object so order is important
+Student.prototype = Object.create(Person1.prototype);
+
+Student.prototype.introduce = function () {
+  console.log(`My name is ${this.firstName} and I study ${this.course}`);
+};
+/*creating a new student
+with the name of Mike
+birthYear of 2020
+course of Computer science
+*/
+const mike = new Student('Mike', 2020, 'Computer Science');
+// console.log(mike);
+mike.introduce(); //calling the introduce function
+mike.calcAge(); //expected output 17
+
+console.log(mike.__proto__);
+console.log(mike.__proto__.__proto__);
+
+console.log(mike instanceof Student); //mike exists as a student
+console.log(mike instanceof Person1); //mike also exists as a person1
+console.log(mike instanceof Object); // is a instanceof Object
+
+Student.prototype.constructor = Student; //fixing the prototype pointing to person
+console.dir(Student.prototype.constructor);
+
+//------inheritance between classes
+// Coding Challenge #3
+
+/* 
+1. Use a constructor function to implement an Electric Car (called EV) as a CHILD "class" of Car. Besides a make and current speed, the EV also has the current battery charge in % ('charge' property);
+2. Implement a 'chargeBattery' method which takes an argument 'chargeTo' and sets the battery charge to 'chargeTo';
+3. Implement an 'accelerate' method that will increase the car's speed by 20, and decrease the charge by 1%. Then log a message like this: 'Tesla going at 140 km/h, with a charge of 22%';
+4. Create an electric car object and experiment with calling 'accelerate', 'brake' and 'chargeBattery' (charge to 90%). Notice what happens when you 'accelerate'! HINT: Review the definiton of polymorphism 😉
+
+DATA CAR 1: 'Tesla' going at 120 km/h, with a charge of 23%
+
+GOOD LUCK 😀
+*/
+const Car3 = function (make, speed) {
+  this.make = make;
+  this.speed = speed;
+};
+
+Car3.prototype.accelerate = function () {
+  this.speed += 10;
+  console.log(`${this.make} is going at ${this.speed}km/h`);
+};
+Car3.prototype.brake = function () {
+  this.speed -= 5;
+  console.log(`${this.make} is going at ${this.speed}km/h`);
+};
+
+const EV = function (make, speed, charge) {
+  Car3.call(this, make, speed);
+  this.charge = charge;
+};
+
+//link the prototypes
+EV.prototype = Object.create(Car3.prototype);
+EV.prototype.chargeBattery = function (chargeTo) {
+  this.charge = chargeTo;
+};
+EV.prototype.accelerate = function () {
+  this.speed += 20;
+  this.charge--;
+  console.log(
+    `${this.make} is going at ${this.speed}km/h with a charge of ${this.charge}`
+  );
+};
+
+const tesla = new EV('Tesla', 120, 23);
+tesla.chargeBattery(90);
+console.log(tesla);
+tesla.brake();
+tesla.accelerate(); //the first method that the prototype chain sees if there are duplicates the first one it sees will be used instead of going to the parent
+// end coding challenge #3
+//!=========
+//inheritance between classes using es6 classes
+//es6 classes are basically constructor functions but with a modern syntax
