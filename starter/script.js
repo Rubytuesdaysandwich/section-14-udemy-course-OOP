@@ -327,44 +327,7 @@ DATA CAR 1: 'Tesla' going at 120 km/h, with a charge of 23%
 
 GOOD LUCK 😀
 */
-const Car3 = function (make, speed) {
-  this.make = make;
-  this.speed = speed;
-};
 
-Car3.prototype.accelerate = function () {
-  this.speed += 10;
-  console.log(`${this.make} is going at ${this.speed}km/h`);
-};
-Car3.prototype.brake = function () {
-  this.speed -= 5;
-  console.log(`${this.make} is going at ${this.speed}km/h`);
-};
-
-const EV = function (make, speed, charge) {
-  Car3.call(this, make, speed);
-  this.charge = charge;
-};
-
-//link the prototypes
-EV.prototype = Object.create(Car3.prototype);
-EV.prototype.chargeBattery = function (chargeTo) {
-  this.charge = chargeTo;
-};
-EV.prototype.accelerate = function () {
-  this.speed += 20;
-  this.charge--;
-  console.log(
-    `${this.make} is going at ${this.speed}km/h with a charge of ${this.charge}`
-  );
-};
-
-const tesla = new EV('Tesla', 120, 23);
-tesla.chargeBattery(90);
-console.log(tesla);
-tesla.brake();
-tesla.accelerate(); //the first method that the prototype chain sees if there are duplicates the first one it sees will be used instead of going to the parent
-// end coding challenge #3
 //!=========
 //------inheritance between classes using es6 classes
 //es6 classes are basically constructor functions but with a modern syntax
@@ -458,38 +421,139 @@ class Account {
   constructor(owner, currency, pin, movement) {
     this.owner = owner;
     this.currency = currency;
-    this.pin = pin;
-    this.movements = [];
+    this._pin = pin;
+    // protected property _movements
+    this._movements = [];
     this.local = navigator.language;
 
     console.log(`Thanks for opening an account, ${owner}
     `);
   }
   //public interface
+  getMovements() {
+    return this._movements;
+  }
   deposit(val) {
-    this.movements.push(val);
+    this._movements.push(val);
+    return this;
   }
   withdraw(val) {
     this.deposit(-val);
+    return this;
   }
-  approveLoan(val) {
+  _approveLoan(val) {
     return true;
   }
   requestLoan(val) {
-    if (this.approveLoan(val)) {
+    if (this._approveLoan(val)) {
       this.deposit(val);
       console.log(`Loan approved`);
+      return this;
     }
   }
 }
 const acc1 = new Account('Jonas', 'EUR', 1111);
 console.log(acc1);
-//// acc1._movements.push(250);
-//// acc1._movements.push(-140);
+// acc1._movements.push(250);
+// acc1._movements.push(-140);
+// acc1.approveLoan(1000);
 acc1.deposit(250);
 acc1.withdraw(140);
 acc1.requestLoan(1000);
-acc1.approveLoan(1000);
+console.log(acc1.getMovements());
 console.log(acc1);
-console.log(acc1.pin);
+// Account.helper();
+// console.log(acc1.#movements);
+// console.log(acc1.#pin);
+// console.log(acc1.#approveLoan(100));
+// console.log(acc1.pin);
 //end another class example
+//!===============
+// Encapsulation: Protected Properties and Methods
+// use _ to indicate that the information should not be on the public api or interface
+// Encapsulation: Protected Properties and Methods
+//!==============
+//chaining
+acc1.deposit(300).deposit(500).withdraw(35).requestLoan(25000).withdraw(4000);
+console.log(acc1.getMovements());
+//end chaining
+//!=============
+// ES6 class ending
+//!===========
+// coding challenge #4
+// Coding Challenge #4
+
+/* 
+1. Re-create challenge #3, but this time using ES6 classes: create an 'EVCl' child class of the 'CarCl' class
+2. Make the 'charge' property private;
+3. Implement the ability to chain the 'accelerate' and 'chargeBattery' methods of this class, and also update the 'brake' method in the 'CarCl' class. They experiment with chining!
+
+DATA CAR 1: 'Rivian' going at 120 km/h, with a charge of 23%
+
+GOOD LUCK 😀
+*/
+class CarCl3 {
+  //make a class of carCl3 with constructor of the make of the car and speed
+  constructor(make, speed) {
+    this.make = make;
+    this.speed = speed;
+  }
+
+  accelerate() {
+    //accelerate the car at 10 km
+    this.speed += 10;
+    console.log(`${this.make} is going at ${this.speed}km/h`);
+    return this;
+  }
+  brake() {
+    //reduce speed by 5 km
+    this.speed -= 5;
+    console.log(`${this.make} is going at ${this.speed}km/h`);
+    return this;
+  }
+  get speedUS() {
+    //get US speed by dividing current speed by 1.6
+    return this.speed / 1.6;
+  }
+  set speedUS(speed) {
+    //set speed by km/h by dividing current mp/h by 1.6
+    this.speed = speed * 1.6;
+  }
+}
+//chain EVCL to CarCl3 by using extend and super
+class EVCL extends CarCl3 {
+  #charge;
+  constructor(make, speed, charge) {
+    super(make, speed);
+    this.#charge = charge; //make charge private by using #
+  }
+  chargeBattery(chargeTo) {
+    //charge the battery to a certain percentage entered by the user
+    this.#charge = chargeTo;
+    return this; //allow us to chain the methods together
+  }
+  accelerate() {
+    //it will accelerate and drain the battery
+    this.speed += 20;
+    this.#charge--;
+    console.log(
+      `${this.make} is going at ${this.speed}km/h with a charge of ${
+        this.#charge
+      }`
+    );
+    return this;
+  }
+}
+const rivian = new EVCL('Rivian', 120, 23); //make a new EVCL named Rivian going 120 and with a charge of 23%
+console.log(rivian);
+// console.log(rivian.#charge);//since charge is given a # it is seen as a private item and will error
+rivian //chaining methods
+  .accelerate()
+  .accelerate()
+  .accelerate()
+  .brake()
+  .chargeBattery(50)
+  .accelerate();
+
+console.log(rivian.speedUS);
+// end coding challenge #4
